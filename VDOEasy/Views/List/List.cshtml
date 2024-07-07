@@ -1,0 +1,92 @@
+﻿@model IEnumerable<VDOEasy.Models.TrnMembers>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>List of Members - VDOEasy</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/VDOEasy.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <div class="container">
+        <h1>List of Members</h1>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Edit</th>
+                    <th>Firstname</th>
+                    <th>Lastname</th>
+                    <th>Birthdate</th>
+                    <th>Address</th>
+                    <th>Member Type</th>
+                    <th>Member Type Price</th>
+                    <th>Branch Name</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var member in Model)
+                {
+                    <tr>
+                        <td>
+                            <a class="btn btn-primary" href="@Url.Action("Edit", "List", new { id = member.ID })">Edit</a>
+                        </td>
+                        <td>@member.Firstname</td>
+                        <td>@member.Lastname</td>
+                        <td>@member.Birthdate.ToShortDateString()</td>
+                        <td>@member.Address</td>
+                        <td>@member.MemberTypeName</td>
+                        <td>@member.MemberTypePrice</td>
+                        <td>@member.BranchName</td>
+                        <td>
+                            <form id="deleteForm_@member.ID" asp-controller="List" asp-action="DeleteTrnMembersMovieType" method="post" style="display:inline;">
+                                <input type="hidden" name="id" value="@member.ID" />
+                                <button type="button" class="btn btn-danger delete-button">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                    <button type="button" class="close" aria-label="Close" onclick="$('#deleteModal').modal('hide');">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete this member?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="$('#deleteModal').modal('hide');">No</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteButton">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        $(document).ready(function () {
+            $('.delete-button').click(function () {
+                var memberId = $(this).closest('form').find('input[name="id"]').val();
+                $('#deleteModal').modal('show');
+                $('#confirmDeleteButton').click(function () {
+                    $('#deleteForm_' + memberId).submit();
+                });
+            });
+        });
+    </script>
+</body>
+</html>

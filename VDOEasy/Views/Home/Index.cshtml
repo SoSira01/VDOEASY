@@ -1,0 +1,225 @@
+﻿@model VDOEasy.ViewModels.MemberViewModel
+
+@{
+    ViewData["Title"] = "Member VDO Easy";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewData["Title"]</title>
+
+    <style>
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+            .form-control:focus {
+                outline: none;
+                border-color: #007bff;
+                box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+            }
+
+        .form-check {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .form-check-input {
+            margin-right: 10px;
+        }
+
+        .form-check-label {
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+            .btn-primary:hover {
+                background-color: #0056b3;
+            }
+
+        .branch-date-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 20px; 
+        }
+
+            .branch-date-container .form-group {
+                width: 48%;
+            }
+
+        .form-control-address {
+            height: auto;
+            min-height: 100px;
+            resize: vertical;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        <h1>สมัครสมาชิกร้าน VDO Easy</h1>
+
+        <form asp-action="Index" method="post">
+            <div class="branch-date-container">
+
+                <div class="form-group">
+                    <label for="branch" class="form-label">สาขา</label>
+                    <select class="form-control" id="branch" name="BranchId" required>
+                        <option value="">เลือกสาขา</option>
+                        @if (ViewData["MasBranches"] != null)
+                        {
+                            foreach (var branch in ViewData["MasBranches"] as List<VDOEasy.Models.MasBranches>)
+                            {
+                                <option value="@branch.ID">@branch.Name</option>
+                            }
+                        }
+                    </select>
+
+                </div>
+                <input type="hidden" name="HiddenBranchId" id="hiddenBranchId">
+
+                <script>
+                    document.getElementById('branch').onchange = function () {
+                        var selectedBranchId = this.value;
+                        console.log("Selected Branch ID:", selectedBranchId);
+                        document.getElementById("hiddenBranchId").value = selectedBranchId;
+                    };
+                </script>
+
+
+                <div class="form-group">
+                    <label for="date" class="form-label">วันที่</label>
+                    <input type="date" class="form-control" id="date" name="Date" value="@DateTime.Today.ToString("yyyy-MM-dd")" readonly>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="IDCardNumber" class="form-label">หมายเลขบัตรประชาชน</label>
+                <input type="text" class="form-control" id="IDCardNumber" name="IDCardNumber" asp-for="IdCardNumber" required>
+                <span asp-validation-for="IdCardNumber" class="text-danger"></span>
+            </div>
+
+            <div class="branch-date-container">
+                <div class="form-group">
+                    <label class="form-label" style="width: 30%; text-align: right; padding-right: 10px;">ชื่อ</label>
+                    <input type="text" class="form-control" id="firstName" name="FirstName" asp-for="FirstName" placeholder="ชื่อ" style="width: 80%;" required>
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" style="width: 30%; text-align: right; padding-right: 10px;">นามสกุล</label>
+                    <input type="text" class="form-control" id="lastName" name="LastName" asp-for="LastName" placeholder="นามสกุล" style="width: 80%;" required>
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label for="birthdate" class="form-label">วัน/เดือน/ปีเกิด</label>
+                    <input type="date" class="form-control" id="birthdate" name="BirthDate" max="@DateTime.Today.ToString("yyyy-MM-dd")">
+                </div>
+
+
+            </div>
+
+            <div class="form-group">
+                <label for="address" class="form-label">ที่อยู่</label>
+                <textarea class="form-control form-control-address" id="address" name="Address" asp-for="Address" rows="3" required></textarea>
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="favoriteGenre" class="form-label">ประเภทภาพยนตร์ที่ชอบ</label>
+                @if (ViewData["MasMovieTypes"] != null)
+                {
+                    foreach (var item in ViewData["MasMovieTypes"] as List<VDOEasy.Models.MasMovieType>)
+                    {
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="movieType_@item.ID" name="SelectedMovieTypeIds" value="@item.ID" data-movie-id="@item.ID">
+                            <label class="form-check-label" for="movieType_@item.ID">
+                                @item.Name
+                            </label>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p>No movie types available.</p>
+                }
+            </div>
+
+            <div class="form-group" id="customMovieInput" style="display: none;">
+                <label for="customMovie" class="form-label">ประเภทภาพยนตร์ที่ชอบ (อื่นๆ)</label>
+                <input type="text" class="form-control" id="customMovie" name="CustomMovie" placeholder="ประเภทภาพยนตร์ที่ชอบ">
+            </div>
+
+            <script>
+                document.querySelectorAll('.form-check-input').forEach(item => {
+                    item.addEventListener('change', function () {
+                        var movieId = this.getAttribute('data-movie-id');
+                        if (movieId == 5 && this.checked) {
+                            document.getElementById('customMovieInput').style.display = 'block';
+                        } else {
+                            document.getElementById('customMovieInput').style.display = 'none';
+                        }
+                    });
+                });
+            </script>
+
+            <div class="form-group">
+                <label class="form-label">ประเภทสมาชิก</label>
+                @foreach (var item in ViewData["MasMemberTypes"] as List<VDOEasy.Models.MasMemberType>)
+                {
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" id="masMemberType_@item.ID" name="MemberTypeId" value="@item.ID" required>
+                        <label class="form-check-label" for="masMemberType_@item.ID">
+                            @item.Name
+                        </label>
+                    </div>
+                }
+                <span asp-validation-for="MemberTypeId" class="text-danger"></span>
+            </div>
+
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">ส่งข้อมูล</button>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+</body>
+</html>

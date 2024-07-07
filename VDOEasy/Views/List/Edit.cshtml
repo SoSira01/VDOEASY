@@ -1,0 +1,84 @@
+﻿@model VDOEasy.ViewModels.EditMemberViewModel
+
+@{
+    ViewData["Title"] = "Edit Member";
+}
+
+<h1>Edit Member</h1>
+
+<form asp-action="Update" asp-controller="List" method="post">
+    <input type="hidden" asp-for="Member.ID" />
+
+    <div class="form-group">
+        <label asp-for="Member.Firstname"></label>
+        <input asp-for="Member.Firstname" class="form-control" />
+        <span asp-validation-for="Member.Firstname" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Member.Lastname"></label>
+        <input asp-for="Member.Lastname" class="form-control" />
+        <span asp-validation-for="Member.Lastname" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Member.Birthdate"></label>
+        <input asp-for="Member.Birthdate" class="form-control" type="date" />
+        <span asp-validation-for="Member.Birthdate" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Member.Address"></label>
+        <input asp-for="Member.Address" class="form-control" />
+        <span asp-validation-for="Member.Address" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Member.IdCardNumber"></label>
+        <input asp-for="Member.IdCardNumber" class="form-control" />
+        <span asp-validation-for="Member.IdCardNumber" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Member.BranchID"></label>
+        <select asp-for="Member.BranchID" class="form-control" asp-items='new SelectList(ViewBag.Branches, "ID", "Name", Model.Member.BranchID)'>
+            <option value="">Please select</option>
+        </select>
+        <span asp-validation-for="Member.BranchID" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Member.MemberTypeID"></label>
+        <select asp-for="Member.MemberTypeID" class="form-control" asp-items='new SelectList(ViewBag.MemberTypes, "ID", "Name", Model.Member.MemberTypeID)'>
+            <option value="">Please select</option>
+        </select>
+        <span asp-validation-for="Member.MemberTypeID" class="text-danger"></span>
+    </div>
+
+    <h3>Movie Types</h3>
+    @foreach (var masMovieType in Model.MasMovieTypes)
+    {
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="movieType_@masMovieType.ID" name="movieTypes" value="@masMovieType.ID"
+               @(Model.SelectMovieTypes.Any(m => m.MovieTypeID == masMovieType.ID) ? "checked" : "")>
+            <label class="form-check-label" for="movieType_@masMovieType.ID">
+                @masMovieType.Name
+            </label>
+
+            @if (Model.SelectMovieTypes.Any(m => m.MovieTypeID == masMovieType.ID))
+            {
+                <a href="#" class="btn btn-sm btn-danger ml-2"
+           onclick="confirmDelete(@masMovieType.ID)">Delete</a>
+            }
+        </div>
+    }
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="List" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+}
