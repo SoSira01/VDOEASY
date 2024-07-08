@@ -12,20 +12,20 @@
 </head>
 <body>
     <div class="container">
-        <h1>List of Members</h1>
+        <h1>รายการสมาชิก</h1>
 
         <table class="table">
             <thead>
                 <tr>
-                    <th>Edit</th>
-                    <th>Firstname</th>
-                    <th>Lastname</th>
-                    <th>Birthdate</th>
-                    <th>Address</th>
-                    <th>Member Type</th>
-                    <th>Member Type Price</th>
-                    <th>Branch Name</th>
-                    <th>Delete</th>
+                    <th></th>
+                    <th>ชื่อ</th>
+                    <th>นามสกุล</th>
+                    <th>วัน/เดือน/ปีเกิด</th>
+                    <th>ที่อยู่</th>
+                    <th>ประเภทสมาชิก</th>
+                    <th>ราคาสมาชิก</th>
+                    <th>สาขา</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -33,7 +33,7 @@
                 {
                     <tr>
                         <td>
-                            <a class="btn btn-primary" href="@Url.Action("Edit", "List", new { id = member.ID })">Edit</a>
+                            <a class="btn btn-primary" asp-controller="List" asp-action="Edit" asp-route-id="@member.ID">แก้ไข</a>
                         </td>
                         <td>@member.Firstname</td>
                         <td>@member.Lastname</td>
@@ -43,9 +43,9 @@
                         <td>@member.MemberTypePrice</td>
                         <td>@member.BranchName</td>
                         <td>
-                            <form id="deleteForm_@member.ID" asp-controller="List" asp-action="DeleteTrnMembersMovieType" method="post" style="display:inline;">
+                            <form id="deleteForm_@member.ID" asp-controller="List" asp-action="UpdateIsActive" method="post" style="display:inline;">
                                 <input type="hidden" name="id" value="@member.ID" />
-                                <button type="button" class="btn btn-danger delete-button">Delete</button>
+                                <button type="button" class="btn btn-danger delete-button">ลบ</button>
                             </form>
                         </td>
                     </tr>

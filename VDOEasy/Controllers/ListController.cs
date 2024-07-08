@@ -5,6 +5,8 @@ using VDOEasy.Models;
 using System;
 using System.Linq;
 using VDOEasy.ViewModels;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 
 namespace VDOEasy.Controllers
 {
@@ -123,15 +125,26 @@ namespace VDOEasy.Controllers
                     viewModel.Member.MemberTypeID
                 );
 
- /*               var existingMovieTypes = _context.GetTrnMembersMovieTypeById(viewModel.Member.ID).ToList();
+                // Update TrnMembersMovieType
+                var existingMovieTypes = _context.GetTrnMembersMovieTypeById(viewModel.Member.ID).ToList();
 
-                foreach (var movieType in viewModel.SelectMovieTypes)
+                // Remove unchecked movie types
+                foreach (var movieType in existingMovieTypes)
                 {
-                    if (movieType.MovieTypeID == 0)
+                    if (!viewModel.SelectedMovieTypeIds.Contains(movieType.MovieTypeID))
                     {
-                        _context.InsertTrnMembersMovieType(movieType.MovieTypeID, viewModel.Member.ID);
+                        _context.DeletetrnMembersMovieTypeById(movieType.MemberID);
                     }
-                }*/
+                }
+
+                // Add newly checked movie types
+                foreach (var movieTypeId in viewModel.SelectedMovieTypeIds)
+                {
+                    if (!existingMovieTypes.Any(m => m.MovieTypeID == movieTypeId))
+                    {
+                        _context.InsertTrnMembersMovieType(movieTypeId, viewModel.Member.ID);
+                    }
+                }
 
                 return RedirectToAction("List");
             }
@@ -150,25 +163,22 @@ namespace VDOEasy.Controllers
             }
             return dateTime;
         }
-
-
-
-        // delete TrnMembersMovieType
+        // Update IsActive status
         [HttpPost]
-        public IActionResult DeleteTrnMembersMovieType(int id)
+        public async Task<IActionResult> UpdateIsActive(int id, bool isActive)
         {
-            _logger.LogInformation("Attempting to delete trnMembersMovieType with ID {ID}", id);
+            _logger.LogInformation("Attempting to update IsActive status for TrnMembers with ID {ID}", id);
 
             try
             {
-                _context.DeletetrnMembersMovieTypeById(id);
-                _logger.LogInformation("Successfully deleted trnMembersMovieType with ID {ID}", id);
+                _context.UpdateTrnMembersIsActiveById(id, false);
+                _logger.LogInformation("Successfully updated IsActive status for TrnMembers with ID {ID}", id);
                 return RedirectToAction("List");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error deleting trnMembersMovieType with ID {ID}", id);
-                return BadRequest("An error occurred while deleting the record.");
+                _logger.LogError(ex, "Error updating IsActive status for TrnMembers with ID {ID}", id);
+                return BadRequest("An error occurred while updating the record.");
             }
         }
     }
